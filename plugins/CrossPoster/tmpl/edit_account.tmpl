@@ -1,0 +1,210 @@
+<mt:setvar name="screen_type" value="dialog-screen dialog-4">
+<mt:setvarblock name="html_head" append="1">
+	<mt:if name="id">
+		<mt:setvar name="page_title" value="<__trans phrase="Edit CrossPosting Account">">
+	<mt:else>
+		<mt:setvar name="page_title" value="<__trans phrase="New CrossPosting Account">">
+	</mt:if>
+	
+	<style type="text/css">
+	.dialog-4 #container, .dialog-4 #content { overflow: visible; }
+	.dialog-4 .actions-bar { position: static;}
+	</style>
+	<script type="text/javascript">
+	<!--
+	<mt:if name="connectors">var connectors = <mt:var name="connectors" to_json="1"></mt:if>
+
+	function checkRequired(f) {
+		var fields = new Array('username', 'password', 'name', 'crossposter');
+		var submit = true;
+		for (var i = 0; i < fields.length; i++) {
+			var field = document.getElementById(fields[i]);
+			if(!field.value) {
+				field.style.border = '1px solid #FF0000';
+				// field.style.borderColor = '#FF0000'; 
+				submit = false;
+				document.getElementById('error-message').style.display = 'block';
+			} else 
+				field.style.borderColor = ''; 
+		}
+		if(submit == true) f.submit();
+	}
+
+	function revealPassword() {
+		var pswd = document.getElementById('password').value;
+		alert('<__trans phrase="The password is:"> ' + pswd);
+	}
+	
+	function hideAll() {
+		var fields = document.getElementsByTagName('div');
+		for (var i = 0; i < fields.length; i++) {
+			if(fields[i].id.match('field') && fields[i].id != 'connector-field')
+				hide(fields[i].id);
+		}
+	}
+
+	function toggleFields(key) {
+		if(!key) {
+			hideAll();
+			return;
+		}
+			
+		var connector;
+		for (var i = 0; i < connectors.length; i++) {
+			connector = connectors[i];
+			if(connector.key == key)
+				break;
+		}
+		
+		if(!connector.username_label)
+			connector.username_label = '<__trans phrase="Username">';
+			
+		if(!connector.password_label)
+			connector.password_label = '<__trans phrase="Password">';
+			
+		if(!connector.url_label)
+			connector.url_label = '<__trans phrase="Blog URL">';
+		
+		var fields = new Array('username', 'password', 'url');
+		
+		for (var i = 0; i < fields.length; i++) {
+			var field = fields[i];
+			var required = field + '_required';
+			var label = field + '_label';
+			var hint = field + '_hint';
+
+			if(connector[required]) {
+				show(field + '-field');
+				
+				if(connector[label])
+					getByID(field + '-label').innerHTML = connector[label];
+					
+				if(connector[hint])	
+					DOM.getElementsByClassName(getByID(field + '-field'), 'hint')[0].innerHTML = connector[hint];
+
+			} else {
+				hide(field + '-field');
+			}
+		}
+		
+		show('name-field');
+		show('excerpt-only-field');
+	}
+
+	function init() {
+		<mt:if name="id">toggleFields('<mt:var name="connector_key">');<mt:else>hideAll();</mt:if>
+	}
+
+	TC.attachLoadEvent(init);
+	//-->
+	</script>
+</mt:setvarblock>
+<mt:include name="dialog/header.tmpl">
+	
+<mt:if name="saved">
+	<mtapp:statusmsg
+	    id="saved"
+	    class="success">
+	    <__trans phrase="Your changes have been saved">
+	</mtapp:statusmsg>
+</mt:if>
+
+<!-- We want it to automatically close the dialog box, so -->
+<mt:setvarblock name="return_args">__mode=list_crossposting_account&blog_id=<mt:var name="blog_id"><mt:unless name="id">&saved_added=1</mt:unless></mt:setvarblock>
+
+<form method="post" action="<mt:var name="script_url">" target="_top">
+	<input type="hidden" name="__mode" value="save" id="__mode" />
+	<input type="hidden" name="_type" value="crossposter_account" />
+	<input type="hidden" name="blog_id" value="<mt:var name="blog_id">" />
+	<input type="hidden" name="author_id" value="<mt:var name="author_id">" />
+	<mt:if name="id"><input type="hidden" name="id" value="<mt:var name="id">" /></mt:if>
+	<input type="hidden" name="magic_token" value="<mt:var name="magic_token">" id="magic_token" />
+	<input type="hidden" name="return_args" value="<mt:var name="return_args" escape="html">" id="return_args" />
+		
+	<mtapp:setting
+		id="connector"
+		label="<__trans phrase="Connector">"
+		hint="<__trans phrase="Choose the connector to use for this account">"
+	 	show_hint="1">
+	
+		<select name="connector_key" onchange="toggleFields(this.value);" id="connector_key">
+			<option value=""><__trans phrase="Select"></option>
+			<mt:loop name="connectors">
+				<option value="<mt:var name="key">"<mt:if name="connector_key" eq="$key"> selected="selected"</mt:if>><mt:var name="label"></option>
+			</mt:loop>
+		</select>
+	
+	</mtapp:setting>
+	
+	<mtapp:setting
+		id="name"
+		label="<__trans phrase="Account Name">"
+		show_hint="0">
+		
+		<input type="text" name="name" value="<mt:var name="name">" id="name" class="full-width" />
+			
+	</mtapp:setting>
+	
+	<mtapp:setting
+		id="username"
+		label="<__trans phrase="Username">"
+		hint=" "
+		show_hint="1">
+		
+		<input type="text" name="username" value="<mt:var name="username">" id="username" class="full-width" />
+			
+	</mtapp:setting>
+	
+	<mtapp:setting
+		id="password"
+		label="<__trans phrase="Password">"
+		hint=" "
+		show_hint="1">
+		
+		<input type="password" name="passwd" value="<mt:var name="passwd">" id="password" class="full-width" />
+			
+		<br /><a href="#" onclick="revealPassword();"><__trans phrase="Reveal Password"></a>
+			
+	</mtapp:setting>
+	
+	<mtapp:setting
+		id="url"
+		label="<__trans phrase="URL">"
+		hint=" "
+		show_hint="1">
+		
+		<input type="text" name="url" value="<mt:var name="url">" id="url" class="full-width" />
+			
+	</mtapp:setting>
+	
+	<mtapp:setting
+		id="excerpt-only"
+		label="<__trans phrase="Excerpt Only?">">
+		
+		<p class="hint"><input type="checkbox" name="excerpt_only" value="1" id="excerpt_only"<mt:if name="excerpt_only"> checked="checked"</mt:if> /> <__trans phrase="Cross post entry excerpt only?"></p>
+			
+	</mtapp:setting>
+	
+	<div class="actions-bar">
+        <div class="actions-bar-inner pkg actions">
+		    <button
+		        type="submit"
+		        accesskey="s"
+		        title="<__trans phrase="Save changes to this [_1] (s)" params="<mt:var name="object_label" lower_case="1">">"
+		        class="primary-button"
+		        ><__trans phrase="Save Changes"></button>
+		    <mt:if name="id"><button
+		        onclick="doRemoveItems(this.form, '<__trans phrase="account">', '<__trans phrase="accounts">', 'id', {'return_args' : '__mode=list_crossposting_accounts&amp;blog_id=<mt:var name="blog_id">'})"
+		        type="submit"
+		        accesskey="x"
+		        title="<__trans phrase="Delete this [_1] (x)" params="<mt:var name="object_label" lower_case="1">">"
+		        ><__trans phrase="Delete"></button></mt:if>
+		    <button
+				type="button"
+		        onclick="closeDialog(); return false;"
+		        ><__trans phrase="Close"></button>
+        </div>
+    </div>
+</form>
+
+<mt:include name="dialog/footer.tmpl">

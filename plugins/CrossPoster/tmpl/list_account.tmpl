@@ -1,0 +1,120 @@
+<mt:setvar name="page_title" value="<__trans phrase="CrossPosting Accounts">">
+<mt:setvarblock name="content_header">
+    <mt:if name="saved">
+        <mtapp:statusmsg
+            id="saved"
+            class="success">
+            <__trans phrase="Your changes have been saved.">
+        </mtapp:statusmsg>
+    </mt:if>
+
+    <mt:if name="saved_added">
+        <mtapp:statusmsg
+            id="saved-added"
+            class="success">
+            <__trans phrase="Your have successfully created a new crossposting account.">
+        </mtapp:statusmsg>
+    </mt:if>
+
+    <mt:if name="saved_deleted">
+        <mtapp:statusmsg
+            id="saved-deleted"
+            class="success">
+            <__trans phrase="The selected account(s) has been deleted from the database.">
+        </mtapp:statusmsg>
+    </mt:if>
+</mt:setvarblock>
+<mt:setvarblock name="related_content">
+    <mtapp:widget
+        id="quickfilters"
+        label="<__trans phrase="Quickfilters">">
+        <mtapp:listfilters>
+    </mtapp:widget>
+</mt:setvarblock>
+<mt:setvarblock name="html_head" append="1">
+<script type="text/javascript">
+<!--
+
+function revealPassword(pswd) {
+	alert('<__trans phrase="The password is:"> ' + pswd);
+}
+
+var tableSelect;
+function init()
+{
+	// setup
+	tableSelect = new TC.TableSelect( "crossposter_account-listing-table" );
+	tableSelect.rowSelect = true;
+}
+
+TC.attachLoadEvent( init );
+//-->
+</script>
+</mt:setvarblock>
+<mt:setvarblock name="list_filter_form">
+<div class="listing-filter">
+    <div class="listing-filter-inner inner pkg">
+            <div class="filter">
+                <div class="filter-title">
+            <mt:unless name="filter">
+                    <strong><__trans phrase="All [_1]" params="<$mt:var name="object_label_plural"$>"></strong>
+                    <!-- <a href="#" onclick="toggleFilter()" class="filter-link">[ <__trans phrase="change"> ]</a> -->
+            <mt:else>
+                <mt:if name="filter_key">
+                    <strong><__trans phrase="Showing only: [_1]" params="<mt:var name="filter_label">"></strong>
+                    <a class="filter-link" href="<mt:var name="script_url">?__mode=<mt:var name="mode"><mt:if name="blog_id">&amp;blog_id=<mt:var name="blog_id"></mt:if><mt:if name="is_power_edit">&amp;is_power_edit=1</mt:if>">[ <__trans phrase="Remove filter"> ]</a>
+                </mt:if>
+            </mt:unless>
+                </div>
+            </div>
+    </div>
+</div>
+</mt:setvarblock>
+<mt:setvarblock name="action_buttons">
+        <input type="button" onclick="doRemoveItems(this.form, '<__trans phrase="account">', '<__trans phrase="accounts">')" name="delete_accounts" value="<__trans phrase="Delete">" accesskey="x" title="<__trans phrase="Delete selected accounts (x)">" />
+</mt:setvarblock>
+<mt:setvarblock name="content_nav">
+    <mt:include name="include/cfg_content_nav.tmpl">
+</mt:setvarblock>
+<mt:include name="include/header.tmpl">
+
+<p><a href="#" onclick="return openDialog(this.form, 'edit_crossposting_account', 'blog_id=<mt:var name="blog_id">')" class="icon-left icon-create"><__trans phrase="New Crossposting Account"></a></p>
+	
+<mt:var name="list_filter_form">	
+<mtapp:listing
+	hide_pager="1"
+    empty_message="<__trans phrase="No crossposting accounts could be found.">">
+    <mt:if __first__>
+            <thead>
+                <tr>
+                    <th class="cb"><input type="checkbox" name="id-head" value="all" class="select" /></th>
+					<!-- <th id="connector"><__trans phrase="Connector"></th> -->
+					<th id="name"><__trans phrase="Account Details"></th>
+					<th id="credentials"><__trans phrase="Credentials"></th>
+					<!-- <th id="excerpt-only"><__trans phrase="Excerpt Only?"></th> -->
+                </tr>
+            </thead>
+            <tbody>
+    </mt:if>
+                <tr class="<mt:if name="__odd__">odd<mt:else>even</mt:if>">
+                    <td class="cb">
+                        <input type="checkbox" name="id" value="<mt:var name="id">" class="select" />
+                    </td>
+					<!-- <td><mt:var name="connector_label"></td> -->
+					<td>
+						<img src="<mt:var name="static_uri">plugins/CrossPoster/images/<mt:var name="connector_label" dirify="1">_logo.png" alt="<mt:var name="connector_label">" title="<mt:var name="connector_label">" style="float: left; margin-right: 10px;<mt:if name="url"> margin-top: 7px;</mt:if>" /><strong><a href="#" onclick="return openDialog(this.form, 'edit_crossposting_account', 'blog_id=<mt:var name="blog_id">&amp;id=<mt:var name="id">')"><mt:var name="name"></a></strong><mt:if name="url"><br />
+						<a href="<mt:var name="url">"><mt:var name="url"></a></mt:if>
+					</td>
+					<td>
+						<mt:if name="connector_username_required"><mt:var name="username"><br /></mt:if>
+						<mt:if name="connector_password_required"><a href="#" onclick="revealPassword('<mt:var name="passwd">')"><__trans phrase="Reveal Password"></a></mt:if>
+					</td>
+					<!-- <td class="si <mt:if name="excerpt_only">status-linked<mt:else>status-unlinked</mt:if>"><img src="<mt:var name="static_uri">images/spacer.gif" alt="<mt:if name="excerpt_only"><__trans phrase="Excerpt Only"><mt:else><__trans phrase="Full Post"></mt:if>" width="9" height="9" /></td> -->
+                </tr>
+    <mt:if __last__>
+            </tbody>
+    </mt:if>
+</mtapp:listing>
+
+
+<mt:include name="include/footer.tmpl">
