@@ -1,0 +1,68 @@
+name: Cross Poster
+id: CrossPoster
+key: CrossPoster
+author_link: http://movalog.com/
+author_name: Arvind Satyanarayan
+description: Allows you to cross-post entries to other blogs
+schema_version: 1.0002
+version: 1.01
+plugin_link: http://plugins.movalog.com/crossposter/
+
+object_types:
+    crossposter_account: CrossPoster::Account
+    crossposter_cache: CrossPoster::Cache
+    
+crossposter_connectors:
+    Vox:
+        class: CrossPoster::Connector::Vox
+        label: Vox
+        username:
+            label: Email Address
+            hint: The email address you use to sign into Vox
+        password:
+            label: Password
+        url:
+            label: Vox URL
+            hint: A URL to your Vox blog
+    MovableType:
+        class: CrossPoster::Connector::MovableType
+        label: Movable Type
+        username:
+            label: Username
+        password:
+            label: API Password
+            hint: Your MT API password (set in your profile)
+        url:
+            label: Blog URL
+            hint: A URL to your Movable Type blog    
+    LiveJournal:
+        class: CrossPoster::Connector::LiveJournal
+        label: LiveJournal
+        username:
+            label: Username
+        password:
+            label: Password
+    TypePad:
+        class: CrossPoster::Connector::TypePad
+        label: TypePad
+        username:
+            label: Username
+        password:
+            label: Password
+        url:
+            label: Blog Name
+            
+applications:
+    cms:
+        menus:
+            prefs:crossposter:
+                label: Crossposting Accounts
+                order: 550
+                mode: list_crossposting_account
+                permission: administer_blog
+                view: blog
+        methods:
+            list_crossposting_account: $CrossPoster::CrossPoster::App::CMS::list_crossposting_account
+            edit_crossposting_account: $CrossPoster::CrossPoster::App::CMS::edit_crossposting_account
+        list_filters:
+            crossposter_account: $CrossPoster::CrossPoster::App::CMS::load_crossposter_list_filters

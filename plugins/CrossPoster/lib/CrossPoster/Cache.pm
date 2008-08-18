@@ -19,7 +19,6 @@ __PACKAGE__->install_properties({
 		account_id => 1,
 		entry_id => 1
     },
-	meta => 1,
 	audit => 1,
     primary_key => 'id',
     datasource => 'crossposter_cache',

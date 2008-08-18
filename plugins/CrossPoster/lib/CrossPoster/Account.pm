@@ -24,7 +24,6 @@ __PACKAGE__->install_properties({
 		connector_key => 1,
         blog_id => 1,
     },
-	meta => 1,
     primary_key => 'id',
     datasource => 'crossposter_account',
 	child_of => 'MT::Blog',

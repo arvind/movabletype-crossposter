@@ -6,10 +6,33 @@ use strict;
 
 use MT::Util qw( encode_url start_background_task );
 
+sub load_crossposter_list_filters {
+    my $plugin = MT->component('CrossPoster');
+    my %filters;
+    my $connectors = MT->registry('crossposter_connectors');
+    foreach my $connector_key ( keys %$connectors ) {
+        $filters{$connector_key} = {
+            label   => $plugin->translate('[_1] Accounts', $connectors->{$connector_key}->{label}),
+            handler => sub {
+                my ( $terms, $args ) = @_;
+                $terms->{connector_key} = $connector_key;
+            },
+        };
+    }
+    my @connectors =
+      sort { $filters{$a}{label} cmp $filters{$b}{label} } keys %filters;
+    my $order = 100;
+    foreach (@connectors) {
+        $filters{$_}{order} = $order;
+        $order += 100;
+    }
+    return \%filters;
+}
+
 sub list_crossposting_account {
-    my $plugin = shift;
     my ($app) = @_;
     my $q = $app->param;
+    my $plugin = MT->component('CrossPoster');
     my $blog_id = $q->param('blog_id');
     
     return $app->return_to_dashboard( redirect => 1 )
@@ -48,10 +71,9 @@ sub list_crossposting_account {
 }
 
 sub edit_crossposting_account {
-    my $plugin = shift;
-    my ($app) = @_;
-    
+    my ($app) = @_;    
     my $q = $app->param;
+    my $plugin = MT->component('CrossPoster');
     my $blog_id = $app->param('blog_id');
     my $id = $app->param('id'); 
     
@@ -89,7 +111,6 @@ sub edit_crossposting_account {
 }
 
 sub _cfg_content_nav {
-    my $plugin = shift;
     my ($cb, $app, $tmpl) = @_;
     my $old = qq{</ul>};
     $old = quotemeta($old);
@@ -101,8 +122,8 @@ HTML
 }
 
 sub _edit_entry_param {
-    my $plugin = shift;
     my ($cb, $app, $param, $tmpl) = @_;
+    my $plugin = MT->component('CrossPoster');
     
     my $blog_id = $app->param('blog_id');
     
@@ -198,9 +219,9 @@ HTML
 # get it every time an account is saved and save it
 
 sub post_save_account {
-    my $plugin = shift;
     my ($cb, $account) = @_;
     my $app = MT->instance;
+    my $plugin = MT->component('CrossPoster');
     
     my $connector_class = $account->connector->{class};
     eval "require $connector_class;";
@@ -213,8 +234,8 @@ sub post_save_account {
 }
 
 sub CMSPostSave_entry {
-    my $plugin = shift;
     my ($cb, $app, $entry) = @_;
+    my $plugin = MT->component('CrossPoster');
     
     my @param = $app->param();
     foreach (@param) {
@@ -231,7 +252,8 @@ sub CMSPostSave_entry {
 }
 
 sub _cross_post {
-    my ($plugin, $cb, $app, $entry, $account_id) = @_;
+    my ($cb, $app, $entry, $account_id) = @_;
+    my $plugin = MT->component('CrossPoster');
     my ($username, $passwd, $api_url, $content, $xml_entry, $api_response);
 
     require MT::Entry;
