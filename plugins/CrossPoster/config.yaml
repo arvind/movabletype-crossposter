@@ -24,6 +24,7 @@ crossposter_connectors:
         url:
             label: Vox URL
             hint: A URL to your Vox blog
+            default: http://
     MovableType:
         class: CrossPoster::Connector::MovableType
         label: Movable Type
@@ -34,7 +35,8 @@ crossposter_connectors:
             hint: Your MT API password (set in your profile)
         url:
             label: Blog URL
-            hint: A URL to your Movable Type blog    
+            hint: A URL to your Movable Type blog
+            default: http://    
     LiveJournal:
         class: CrossPoster::Connector::LiveJournal
         label: LiveJournal
@@ -66,3 +68,6 @@ applications:
             edit_crossposting_account: $CrossPoster::CrossPoster::App::CMS::edit_crossposting_account
         list_filters:
             crossposter_account: $CrossPoster::CrossPoster::App::CMS::load_crossposter_list_filters
+        callbacks:
+            template_source.cfg_content_nav: $CrossPoster::CrossPoster::App::CMS::_cfg_content_nav
+            template_param.edit_entry: $CrossPoster::CrossPoster::App::CMS::_edit_entry_param

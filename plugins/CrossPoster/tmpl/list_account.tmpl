@@ -50,6 +50,12 @@ function init()
 TC.attachLoadEvent( init );
 //-->
 </script>
+<style type="text/css">
+.content-nav #content-header #create-new-link {
+    margin-left: 140px;
+    padding-left: 20px;
+}
+</style>
 </mt:setvarblock>
 <mt:setvarblock name="list_filter_form">
 <div class="listing-filter">
@@ -76,9 +82,10 @@ TC.attachLoadEvent( init );
 <mt:setvarblock name="content_nav">
     <mt:include name="include/cfg_content_nav.tmpl">
 </mt:setvarblock>
+<mt:setvarblock name="content_header">
+    <p id="create-new-link"><a href="#" onclick="return openDialog(this.form, 'edit_crossposting_account', 'blog_id=<mt:var name="blog_id">')" class="icon-left icon-create"><__trans phrase="New Crossposting Account"></a></p>
+</mt:setvarblock>
 <mt:include name="include/header.tmpl">
-
-<p><a href="#" onclick="return openDialog(this.form, 'edit_crossposting_account', 'blog_id=<mt:var name="blog_id">')" class="icon-left icon-create"><__trans phrase="New Crossposting Account"></a></p>
 	
 <mt:var name="list_filter_form">	
 <mtapp:listing

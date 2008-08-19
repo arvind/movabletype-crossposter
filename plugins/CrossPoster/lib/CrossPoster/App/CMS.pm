@@ -94,13 +94,7 @@ sub edit_crossposting_account {
         my $row = $connectors->{$key};
         $row->{key} = $key;
         delete $row->{plugin};
-        foreach my $k (keys %$row) {
-            my $value = $row->{$k};
-            if (ref($value) eq 'CODE') { # handle coderefs
-                $value = $value->(@_);
-            }
-            $row->{$k} = $value;
-        }
+        _registry_code_value($row);
         push @connectors_loop, $row;
     }
 
@@ -115,7 +109,7 @@ sub _cfg_content_nav {
     my $old = qq{</ul>};
     $old = quotemeta($old);
     my $new = <<HTML;
-<li<mt:if name="crossposting_accounts"> class="active"</mt:if>><a href="<mt:var name="script_url">?__mode=list_crossposting_account&amp;blog_id=<mt:var name="blog_id">"><__trans phrase="Crossposting"></a></li>   
+<li<mt:if name="crossposting_accounts"> class="active"</mt:if>><a href="<mt:var name="script_url">?__mode=list_crossposting_account&amp;blog_id=<mt:var name="blog_id">"><b><__trans phrase="Crossposting"></b></a></li>   
 HTML
 
     $$tmpl =~ s/($old)/$new\n$1/;
@@ -408,6 +402,20 @@ sub _show_error {
         $app->print($app->show_error($msg));
         $app->{no_print_body} = 1;
         exit();
+    }
+}
+
+# Recursively loop through a registry hashref and if the value is a coderef,
+# execute it so that we get a value
+sub _registry_code_value {
+    my ($hash) = @_;
+    
+    foreach my $key (keys %$hash) {
+        if(ref $hash->{$key} eq 'HASH') {
+            _registry_code_value($hash->{$key})
+        } elsif(ref $hash->{$key} eq 'CODE') {
+            $hash->{$key} = $hash->{$key}->();
+        }
     }
 }
 

@@ -7,8 +7,8 @@
 	</mt:if>
 	
 	<style type="text/css">
-	.dialog-4 #container, .dialog-4 #content { overflow: visible; }
-	.dialog-4 .actions-bar { position: static;}
+        .field-content { margin-left: 130px; }
+        .threequarter-width { width: 75%; }
 	</style>
 	<script type="text/javascript">
 	<!--
@@ -56,34 +56,23 @@
 				break;
 		}
 		
-		if(!connector.username_label)
-			connector.username_label = '<__trans phrase="Username">';
-			
-		if(!connector.password_label)
-			connector.password_label = '<__trans phrase="Password">';
-			
-		if(!connector.url_label)
-			connector.url_label = '<__trans phrase="Blog URL">';
-		
 		var fields = new Array('username', 'password', 'url');
 		
 		for (var i = 0; i < fields.length; i++) {
 			var field = fields[i];
-			var required = field + '_required';
-			var label = field + '_label';
-			var hint = field + '_hint';
-
-			if(connector[required]) {
-				show(field + '-field');
-				
-				if(connector[label])
-					getByID(field + '-label').innerHTML = connector[label];
-					
-				if(connector[hint])	
-					DOM.getElementsByClassName(getByID(field + '-field'), 'hint')[0].innerHTML = connector[hint];
-
+			
+			if(connector[field]) {
+			    show(field + '-field');
+			    
+			if(connector[field].label)
+    			getByID(field + '-label').innerHTML = connector[field].label;
+    			
+    		DOM.getElementsByClassName(getByID(field + '-field'), 'hint')[0].innerHTML = (connector[field].hint || '');
+    		
+    		<mt:unless name="id">getByID(field).value = (connector[field].default || '');</mt:unless>
+    		
 			} else {
-				hide(field + '-field');
+			    hide(field + '-field');
 			}
 		}
 		
@@ -141,7 +130,7 @@
 		label="<__trans phrase="Account Name">"
 		show_hint="0">
 		
-		<input type="text" name="name" value="<mt:var name="name">" id="name" class="full-width" />
+		<input type="text" name="name" value="<mt:var name="name">" id="name" class="threequarter-width" />
 			
 	</mtapp:setting>
 	
@@ -151,7 +140,7 @@
 		hint=" "
 		show_hint="1">
 		
-		<input type="text" name="username" value="<mt:var name="username">" id="username" class="full-width" />
+		<input type="text" name="username" value="<mt:var name="username">" id="username" class="threequarter-width" />
 			
 	</mtapp:setting>
 	
@@ -161,7 +150,7 @@
 		hint=" "
 		show_hint="1">
 		
-		<input type="password" name="passwd" value="<mt:var name="passwd">" id="password" class="full-width" />
+		<input type="password" name="passwd" value="<mt:var name="passwd">" id="password" class="threequarter-width" />
 			
 		<br /><a href="#" onclick="revealPassword();"><__trans phrase="Reveal Password"></a>
 			
@@ -173,7 +162,7 @@
 		hint=" "
 		show_hint="1">
 		
-		<input type="text" name="url" value="<mt:var name="url">" id="url" class="full-width" />
+		<input type="text" name="url" value="<mt:var name="url">" id="url" class="threequarter-width" />
 			
 	</mtapp:setting>
 	
