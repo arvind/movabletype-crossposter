@@ -77,20 +77,24 @@ TC.attachLoadEvent( init );
 </div>
 </mt:setvarblock>
 <mt:setvarblock name="action_buttons">
-        <input type="button" onclick="doRemoveItems(this.form, '<__trans phrase="account">', '<__trans phrase="accounts">')" name="delete_accounts" value="<__trans phrase="Delete">" accesskey="x" title="<__trans phrase="Delete selected accounts (x)">" />
+    <a href="javascript:void(0)"
+        onclick="doRemoveItems(getByID('<$mt:var name="object_type"$>-listing-form'), '<mt:var name="object_label" lower_case="1" escape="js">', '<mt:var name="object_label_plural" lower_case="1" escape="js">'); return false;"
+        accesskey="x"
+        title="<__trans phrase="Delete selected accounts (x)">"
+        ><__trans phrase="Delete"></a>
 </mt:setvarblock>
 <mt:setvarblock name="content_nav">
     <mt:include name="include/cfg_content_nav.tmpl">
 </mt:setvarblock>
 <mt:setvarblock name="content_header">
-    <p id="create-new-link"><a href="#" onclick="return openDialog(this.form, 'edit_crossposting_account', 'blog_id=<mt:var name="blog_id">')" class="icon-left icon-create"><__trans phrase="New Crossposting Account"></a></p>
+    <p id="create-new-link"><a href="#" onclick="return openDialog(this.form, 'edit_crossposting_account', 'blog_id=<mt:var name="blog_id">')" class="icon-left icon-create"><__trans phrase="New Account"></a></p>
 </mt:setvarblock>
 <mt:include name="include/header.tmpl">
 	
 <mt:var name="list_filter_form">	
 <mtapp:listing
 	hide_pager="1"
-    empty_message="<__trans phrase="No crossposting accounts could be found.">">
+    empty_message="<__trans phrase="No accounts could be found.">">
     <mt:if __first__>
             <thead>
                 <tr>
@@ -113,8 +117,8 @@ TC.attachLoadEvent( init );
 						<a href="<mt:var name="url">"><mt:var name="url"></a></mt:if>
 					</td>
 					<td>
-						<mt:if name="connector_username_required"><mt:var name="username"><br /></mt:if>
-						<mt:if name="connector_password_required"><a href="#" onclick="revealPassword('<mt:var name="passwd">')"><__trans phrase="Reveal Password"></a></mt:if>
+						<mt:if name="connector_username"><mt:var name="username"><br /></mt:if>
+						<mt:if name="connector_password"><a href="#" onclick="revealPassword('<mt:var name="passwd">')"><__trans phrase="Reveal Password"></a></mt:if>
 					</td>
 					<!-- <td class="si <mt:if name="excerpt_only">status-linked<mt:else>status-unlinked</mt:if>"><img src="<mt:var name="static_uri">images/spacer.gif" alt="<mt:if name="excerpt_only"><__trans phrase="Excerpt Only"><mt:else><__trans phrase="Full Post"></mt:if>" width="9" height="9" /></td> -->
                 </tr>

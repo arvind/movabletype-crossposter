@@ -18,7 +18,7 @@ sub edit_uri {
 
 sub post_uri {
 	my $self = shift;
-	my ($app, $account) = @_;
+	my ($account) = @_;
 	
 	my $url = $account->url;
 	if ( $url !~ m!rsd\.xml$! ) {

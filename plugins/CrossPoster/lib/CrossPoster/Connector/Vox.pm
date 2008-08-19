@@ -6,30 +6,25 @@ use strict;
 
 use constant NS_DC => 'http://purl.org/dc/elements/1.1/';
 
-use constant ENDPOINT => 'http://www.vox.com/services/atom';
-
 sub edit_uri { return ''; } # Vox doesn't support editing entries via Atom API yet
 
 sub post_uri {
 	my $self = shift;
-	my ($app, $account) = @_;
+	my ($account) = @_;
 	
-	require XML::Atom::Client;
-	
-	my $api = XML::Atom::Client->new;
-	$api->username($account->username);
-	$api->password($account->passwd);
-	
-	my $services = $api->getFeed(ENDPOINT);
-	
-    my @links = $services->link;
-    for my $link (@links) {
-        if ( $link->rel eq 'service.post' ) {
-            return $link->href;
-        }
+    require XML::Atom::Feed;
+    my $feed = XML::Atom::Feed->new( URI->new($account->url) );
+    
+    if($feed) {
+        my @links = $feed->link;
+        for my $link (@links) {
+            if ( $link->rel eq 'service.post' ) {
+                return $link->href;
+            }
+        }        
     }
 
-	return undef;
+	die MT->translate("Could not find PostURI from %s", $account->url);
 }
 
 sub entry_details {

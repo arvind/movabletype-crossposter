@@ -20,7 +20,7 @@ sub edit_uri {
 
 sub post_uri {
 	my $self = shift;
-	my ($app, $account) = @_;
+	my ($account) = @_;
 	
 	my $blog_name = $account->url;
 	

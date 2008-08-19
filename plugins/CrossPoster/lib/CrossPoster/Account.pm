@@ -30,11 +30,11 @@ __PACKAGE__->install_properties({
 });
 
 sub class_label {
-    return MT->translate("Crossposting Account");
+    return MT->translate("Account");
 }
 
 sub class_label_plural {
-    return MT->translate("Crossposting Accounts");
+    return MT->translate("Accounts");
 }
 
 sub connector {
@@ -42,6 +42,26 @@ sub connector {
 	my $connector = MT->registry('crossposter_connectors', $account->connector_key);
 	
 	return $connector;
+}
+
+sub save {
+    my $account = shift;
+
+    ## Getting the PostURI could be an expensive procedure so
+    # get it every time an account is saved and store it w/acct
+    my $connector_class = $account->connector->{class};
+    eval "require $connector_class;";
+    Carp::croak($@) if $@;
+    
+    my $post_uri = $connector_class->post_uri($account);
+    $account->post_uri($post_uri);
+    
+    unless ($account->SUPER::save(@_)) {
+        print STDERR "error during save: " . $account->errstr . "\n";
+        die $account->errstr;
+    }
+    
+    1;
 }
 
 1;

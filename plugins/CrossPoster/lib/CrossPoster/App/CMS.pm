@@ -41,9 +41,9 @@ sub list_crossposting_account {
     $app->add_breadcrumb($plugin->translate("Crossposting Accounts"));
     
     my $hasher = sub {
-        my ($obj, $row) = @_;
+        my ($account, $row) = @_;
         
-        my $connector = $obj->connector;
+        my $connector = $account->connector;
         next if !$connector;
         
         foreach my $key (keys %$connector) {
@@ -207,24 +207,6 @@ HTML
     
 
 
-}
-
-# Getting the PostURI could be an expensive procedure so
-# get it every time an account is saved and save it
-
-sub post_save_account {
-    my ($cb, $account) = @_;
-    my $app = MT->instance;
-    my $plugin = MT->component('CrossPoster');
-    
-    my $connector_class = $account->connector->{class};
-    eval "require $connector_class;";
-    return _show_error($plugin, $app, $@, 0)
-        if $@;
-        
-    my $post_uri = $connector_class->post_uri($app, $account);
-    $account->post_uri($post_uri);
-    $account->save or die $account->errstr;
 }
 
 sub CMSPostSave_entry {
