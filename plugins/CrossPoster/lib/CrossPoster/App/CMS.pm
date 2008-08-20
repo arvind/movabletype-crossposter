@@ -149,61 +149,15 @@ sub _edit_entry_param {
     
     $param->{crossposter_accts_loop} = \@accounts_loop;
     
-    # Add our fancy javascript to the head
-    my $header_include = $tmpl->getElementById('header_include');
-    my $head_setvar = $tmpl->createElement('setvarblock', { name => 'html_head', append => 1 });
-    
-    my $innerHTML = <<HTML;
-    
-    <script type="text/javascript">
-    <!--
-        function toggleCrossposter() {
-            toggleVisible('crossposter-selector', 'visible');
-            toggleVisible('select-crossposter-link', 'hidden');
-        }
-
-
-        function toggleVisible(id, cn) {
-            var d = getByID(id);
-            if( DOM.hasClassName( d, cn ) )
-                DOM.removeClassName( d, cn );
-            else
-                DOM.addClassName( d, cn );
-        }
-
-    //-->
-    </script>
-    
-HTML
-    
-    $head_setvar->innerHTML($innerHTML);
-    $tmpl->insertBefore($head_setvar, $header_include);
-    
     # Next add the crossposter field after entry basename
     my $basename_field = $tmpl->getElementById('basename');
     
     my $crossposter_field = $tmpl->createElement('app:setting', { id => 'select-crossposters', label => $plugin->translate('Crosspost To') });
     
     $innerHTML = <<HTML;
-    
-    <a class="add-new-category-link visible" href="javascript:toggleCrossposter();" id="select-crossposter-link"><__trans phrase="Select Accounts"></a>
-
-    <div id="crossposter-selector" class="category-selector autolayout-flyout-smart flyout" style="position: static;">
-        <div id="crossposter-selector-inner" class="inner">
-            <h4 style="font-size: 14px; margin: 0pt 0pt 5px;"><__trans phrase="Crossposting Accounts"></h4>
-
-            <div id="crossposter-selector-list" class="category-selector-list">
-                <mt:loop name="crossposter_accts_loop">
-                    <div style="text-align: left;">
-                        <label><input type="checkbox" name="crosspost_acct_<mt:var name="id">" value="1" class="add-category-checkbox"<mt:if name="is_selected"> checked="checked"</mt:if> /> <mt:var name="name"></label>
-                    </div>
-                </mt:loop>
-            </div>
-
-            <a class="add-category-ok-link" href="javascript:toggleCrossposter()" mt:command="close"><__trans phrase="OK"></a>
-        </div>
-    </div>  
-    
+<mt:loop name="crossposter_accts_loop">
+    <label><input type="checkbox" name="crosspost_acct_<mt:var name="id">" value="1" class="add-category-checkbox"<mt:if name="is_selected"> checked="checked"</mt:if> /> <mt:var name="name"></label><br />
+</mt:loop>
 HTML
         
     $crossposter_field->innerHTML($innerHTML);
