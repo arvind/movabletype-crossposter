@@ -120,6 +120,11 @@ sub _edit_entry_param {
     my $plugin = MT->component('CrossPoster');
     
     my $blog_id = $app->param('blog_id');
+    my $entry;
+    if(my $id = $app->param('id')) {
+        require MT::Entry;
+        $entry = MT::Entry->load($id);
+    }
     
     # First populate all the accounts we have
     
@@ -134,10 +139,9 @@ sub _edit_entry_param {
         my $connector = $account->connector;
         next if !$connector;        
         
-        if(my $id = $app->param('id')) {
-            require CrossPoster::Cache;
-            my $cache = CrossPoster::Cache->load({ account_id => $account->id, entry_id => $id, blog_id => $blog_id });
-            $row->{is_selected} = $cache ? 1 : 0;
+        if($entry) {
+            my $cache = $entry->crossposter_cache || {};
+            $row->{is_selected} = $cache->{$account->id} ? 1 : 0;
         }
         
         push @accounts_loop, $row;
@@ -204,9 +208,6 @@ HTML
         
     $crossposter_field->innerHTML($innerHTML);
     $tmpl->insertAfter($crossposter_field, $basename_field);
-    
-
-
 }
 
 sub CMSPostSave_entry {
@@ -216,7 +217,7 @@ sub CMSPostSave_entry {
     my @param = $app->param();
     foreach (@param) {
         if (m/^crosspost_acct_(\d+)$/) {
-            _cross_post($plugin, $cb, $app, $entry, $1);
+            _cross_post($cb, $app, $entry, $1);
             # my $res = MT::Util::start_background_task(sub {
             #       _cross_post($plugin, @_, $1);
             #                 1;

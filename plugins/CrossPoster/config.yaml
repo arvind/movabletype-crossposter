@@ -11,6 +11,8 @@ plugin_link: http://plugins.movalog.com/crossposter/
 object_types:
     crossposter_account: CrossPoster::Account
     crossposter_cache: CrossPoster::Cache
+    entry:
+        crossposter_cache: vblob meta
     
 crossposter_connectors:
     Vox:

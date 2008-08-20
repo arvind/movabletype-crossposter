@@ -8,15 +8,12 @@ use constant ENDPOINT => 'http://www.typepad.com/t/atom/weblog';
 
 sub edit_uri { 
 	my $self = shift;
-	my ($app, $account, $entry) = @_;
+	my ($account, $entry) = @_;
 	
-	require CrossPoster::Cache;
-	my $cache = CrossPoster::Cache->load({ entry_id => $entry->id, blog_id => $entry->blog_id, account_id => $account->id });
+	my $cache = $entry->crossposter_cache || {};
 	
-	return '' if !$cache;
-	
-	return $cache->response;	
-} 
+	return $cache->{$account->id};	
+}
 
 sub post_uri {
 	my $self = shift;
